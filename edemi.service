@@ -1,0 +1,23 @@
+[Unit]
+Description=EDEMI Smart Glasses System
+After=multi-user.target
+Wants=network.target
+
+[Service]
+Type=simple
+User=smart-pi
+WorkingDirectory=/home/smart-pi/edemi
+ExecStart=/usr/bin/python3 /home/smart-pi/edemi/main.py
+Restart=on-failure
+RestartSec=5
+StandardInput=tty
+StandardOutput=tty
+TTYPath=/dev/tty1
+TTYReset=yes
+TTYVHangup=yes
+StandardError=null
+Environment=PYTHONUNBUFFERED=1
+Environment=TERM=linux
+
+[Install]
+WantedBy=multi-user.target

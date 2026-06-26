@@ -1,0 +1,21 @@
+{
+  "user_name": "Edemi",
+  "user_religion": "Christian",
+  "user_reply_style": "polite",
+  "user_language": "English",
+  "user_gender": "Male",
+  "auto_reply": true,
+  "environment_alerts": true,
+  "mic_sensitivity": "High",
+  "tft_clear_delay": 10,
+  "alert_duration": 5,
+  "ar_text_size": "Large",
+  "show_date": true,
+  "show_battery": true,
+  "show_wifi": true,
+  "emergency_message_1": "I NEED HELP",
+  "emergency_message_2": "PLEASE CALL SOMEONE",
+  "emergency_message_3": "EMERGENCY \u2014 PLEASE HELP",
+  "user_city": "Accra",
+  "user_age_group": "Adult"
+}

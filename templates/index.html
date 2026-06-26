@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>EDEMI Settings</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background: #0a0f1e;
+    color: #e0e0e0;
+    min-height: 100vh;
+    padding-bottom: 40px;
+  }
+  .header {
+    background: linear-gradient(135deg, #0d1f3c, #0a2a4a);
+    padding: 20px;
+    text-align: center;
+    border-bottom: 2px solid #00ffaa33;
+  }
+  .header h1 { font-size: 28px; font-weight: 900; color: #00ffaa; letter-spacing: 6px; }
+  .header p { font-size: 12px; color: #667788; margin-top: 4px; letter-spacing: 2px; }
+  .status-bar {
+    display: flex;
+    justify-content: space-around;
+    background: #0d1520;
+    padding: 10px 20px;
+    border-bottom: 1px solid #1a2a40;
+    font-size: 12px;
+    color: #00ffaa;
+  }
+  .status-item span { color: #667788; }
+  .container { max-width: 600px; margin: 0 auto; padding: 16px; }
+  .section {
+    background: #0d1828;
+    border: 1px solid #1a2a40;
+    border-radius: 12px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .section-title {
+    background: #0a1f3a;
+    padding: 12px 18px;
+    font-size: 11px;
+    font-weight: 700;
+    color: #00ffaa;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    border-bottom: 1px solid #1a2a40;
+  }
+  .row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 18px;
+    border-bottom: 1px solid #111d2e;
+  }
+  .row:last-child { border-bottom: none; }
+  .row label { font-size: 14px; color: #c0cce0; flex: 1; }
+  .row .hint { font-size: 11px; color: #445566; display: block; margin-top: 2px; }
+  input[type="text"] {
+    background: #0a1520;
+    border: 1px solid #1a3050;
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    width: 180px;
+    outline: none;
+    transition: border 0.2s;
+  }
+  input[type="text"]:focus { border-color: #00ffaa; }
+  select {
+    background: #0a1520;
+    border: 1px solid #1a3050;
+    color: #ffffff;
+    padding: 8px 12px;
+    border-radius: 8px;
+    font-size: 14px;
+    width: 150px;
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  select:focus { border-color: #00ffaa; }
+  .toggle { position: relative; width: 50px; height: 26px; flex-shrink: 0; }
+  .toggle input { opacity: 0; width: 0; height: 0; }
+  .toggle-slider {
+    position: absolute;
+    cursor: pointer;
+    inset: 0;
+    background: #1a2a40;
+    border-radius: 26px;
+    transition: 0.3s;
+  }
+  .toggle-slider:before {
+    content: "";
+    position: absolute;
+    width: 20px; height: 20px;
+    left: 3px; bottom: 3px;
+    background: #667788;
+    border-radius: 50%;
+    transition: 0.3s;
+  }
+  .toggle input:checked + .toggle-slider { background: #00ffaa33; }
+  .toggle input:checked + .toggle-slider:before {
+    transform: translateX(24px);
+    background: #00ffaa;
+  }
+  .emergency-input {
+    width: 100%;
+    background: #120a0a;
+    border: 1px solid #3a1010;
+    color: #ff4444;
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    margin-top: 8px;
+    outline: none;
+  }
+  .emergency-input:focus { border-color: #ff4444; }
+  .emergency-row { padding: 10px 18px; border-bottom: 1px solid #111d2e; }
+  .emergency-row:last-child { border-bottom: none; }
+  .emergency-row label { font-size: 11px; color: #664444; letter-spacing: 1px; text-transform: uppercase; }
+  .save-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #00cc88, #00ffaa);
+    color: #0a0f1e;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.2s;
+  }
+  .save-btn:active { opacity: 0.8; }
+  .shutdown-btn {
+    width: 100%;
+    padding: 16px;
+    background: linear-gradient(135deg, #cc0000, #ff4444);
+    color: #ffffff;
+    font-size: 16px;
+    font-weight: 900;
+    letter-spacing: 3px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    margin-top: 8px;
+    transition: opacity 0.2s;
+  }
+  .shutdown-btn:active { opacity: 0.8; }
+  .toast {
+    display: none;
+    position: fixed;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #00ffaa;
+    color: #0a0f1e;
+    padding: 12px 24px;
+    border-radius: 30px;
+    font-weight: 700;
+    font-size: 14px;
+    z-index: 1000;
+    box-shadow: 0 4px 20px #00ffaa44;
+  }
+  .toast.error { background: #ff4444; color: white; }
+  .toast.show { display: block; animation: fadeup 0.3s ease; }
+  @keyframes fadeup {
+    from { opacity: 0; transform: translateX(-50%) translateY(10px); }
+    to   { opacity: 1; transform: translateX(-50%) translateY(0); }
+  }
+  .info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+  .info-item { padding: 12px 18px; border-bottom: 1px solid #111d2e; border-right: 1px solid #111d2e; }
+  .info-item:nth-child(even) { border-right: none; }
+  .info-label { font-size: 10px; color: #445566; text-transform: uppercase; letter-spacing: 1px; }
+  .info-value { font-size: 14px; color: #00ffaa; font-weight: 600; margin-top: 3px; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>EDEMI</h1>
+  <p>ENHANCED DEAF EXPRESSION AND MOBILITY INTELLIGENCE</p>
+</div>
+
+<div class="status-bar">
+  <div><span>NETWORK </span><span id="st-wifi">Loading...</span></div>
+  <div><span>UPTIME </span><span id="st-uptime">--:--:--</span></div>
+  <div><span>POWER </span><span id="st-power">Powered</span></div>
+</div>
+
+<div class="container">
+
+  <!-- PERSONAL PROFILE -->
+  <div class="section">
+    <div class="section-title">Personal Profile</div>
+    <div class="row">
+      <label>Your Name
+        <span class="hint">System responds when your name is called</span>
+      </label>
+      <input type="text" id="user_name" value="{{ settings.user_name }}" placeholder="Enter name" maxlength="30">
+    </div>
+    <div class="row">
+      <label>City
+        <span class="hint">Used for location-based replies</span>
+      </label>
+      <input type="text" id="user_city" value="{{ settings.user_city }}" placeholder="Enter city" maxlength="50">
+    </div>
+    <div class="row">
+      <label>Age Group</label>
+      <select id="user_age_group">
+        <option value="Teen"   {% if settings.user_age_group=='Teen'   %}selected{% endif %}>Teen</option>
+        <option value="Adult"  {% if settings.user_age_group=='Adult'  %}selected{% endif %}>Adult</option>
+        <option value="Senior" {% if settings.user_age_group=='Senior' %}selected{% endif %}>Senior</option>
+      </select>
+    </div>
+    <div class="row">
+      <label>Religion
+        <span class="hint">Personalizes replies e.g. God's grace</span>
+      </label>
+      <select id="user_religion">
+        <option value="Christian" {% if settings.user_religion=='Christian' %}selected{% endif %}>Christian</option>
+        <option value="Muslim"    {% if settings.user_religion=='Muslim'    %}selected{% endif %}>Muslim</option>
+        <option value="None"      {% if settings.user_religion=='None'      %}selected{% endif %}>None</option>
+      </select>
+    </div>
+    <div class="row">
+      <label>Reply Style</label>
+      <select id="user_reply_style">
+        <option value="polite" {% if settings.user_reply_style=='polite' %}selected{% endif %}>Polite</option>
+        <option value="casual" {% if settings.user_reply_style=='casual' %}selected{% endif %}>Casual</option>
+        <option value="formal" {% if settings.user_reply_style=='formal' %}selected{% endif %}>Formal</option>
+      </select>
+    </div>
+    <div class="row">
+      <label>Gender</label>
+      <select id="user_gender">
+        <option value="Male"   {% if settings.user_gender=='Male'   %}selected{% endif %}>Male</option>
+        <option value="Female" {% if settings.user_gender=='Female' %}selected{% endif %}>Female</option>
+        <option value="Other"  {% if settings.user_gender=='Other'  %}selected{% endif %}>Other</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- SYSTEM SETTINGS -->
+  <div class="section">
+    <div class="section-title">System Settings</div>
+    <div class="row">
+      <label>Auto Reply
+        <span class="hint">Automatically send greetings and acknowledgments</span>
+      </label>
+      <label class="toggle">
+        <input type="checkbox" id="auto_reply" {% if settings.auto_reply %}checked{% endif %}>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="row">
+      <label>Environment Alerts
+        <span class="hint">Detect sounds like vehicles and alarms</span>
+      </label>
+      <label class="toggle">
+        <input type="checkbox" id="environment_alerts" {% if settings.environment_alerts %}checked{% endif %}>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="row">
+      <label>Microphone Sensitivity</label>
+      <select id="mic_sensitivity">
+        <option value="Low"    {% if settings.mic_sensitivity=='Low'    %}selected{% endif %}>Low</option>
+        <option value="Medium" {% if settings.mic_sensitivity=='Medium' %}selected{% endif %}>Medium</option>
+        <option value="High"   {% if settings.mic_sensitivity=='High'   %}selected{% endif %}>High</option>
+      </select>
+    </div>
+    <div class="row">
+      <label>OLED Clear Delay
+        <span class="hint">How long reply stays on outward screen</span>
+      </label>
+      <select id="tft_clear_delay">
+        <option value="5"  {% if settings.tft_clear_delay==5  %}selected{% endif %}>5 seconds</option>
+        <option value="10" {% if settings.tft_clear_delay==10 %}selected{% endif %}>10 seconds</option>
+        <option value="15" {% if settings.tft_clear_delay==15 %}selected{% endif %}>15 seconds</option>
+      </select>
+    </div>
+    <div class="row">
+      <label>Alert Duration
+        <span class="hint">How long environment alerts show</span>
+      </label>
+      <select id="alert_duration">
+        <option value="3" {% if settings.alert_duration==3 %}selected{% endif %}>3 seconds</option>
+        <option value="5" {% if settings.alert_duration==5 %}selected{% endif %}>5 seconds</option>
+        <option value="8" {% if settings.alert_duration==8 %}selected{% endif %}>8 seconds</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- DISPLAY SETTINGS -->
+  <div class="section">
+    <div class="section-title">Display Settings</div>
+    <div class="row">
+      <label>AR Text Size</label>
+      <select id="ar_text_size">
+        <option value="Small"  {% if settings.ar_text_size=='Small'  %}selected{% endif %}>Small</option>
+        <option value="Medium" {% if settings.ar_text_size=='Medium' %}selected{% endif %}>Medium</option>
+        <option value="Large"  {% if settings.ar_text_size=='Large'  %}selected{% endif %}>Large</option>
+      </select>
+    </div>
+    <div class="row">
+      <label>Show Date on AR</label>
+      <label class="toggle">
+        <input type="checkbox" id="show_date" {% if settings.show_date %}checked{% endif %}>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="row">
+      <label>Show WiFi Status</label>
+      <label class="toggle">
+        <input type="checkbox" id="show_wifi" {% if settings.show_wifi %}checked{% endif %}>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+    <div class="row">
+      <label>Show Power Status</label>
+      <label class="toggle">
+        <input type="checkbox" id="show_battery" {% if settings.show_battery %}checked{% endif %}>
+        <span class="toggle-slider"></span>
+      </label>
+    </div>
+  </div>
+
+  <!-- EMERGENCY SETTINGS -->
+  <div class="section">
+    <div class="section-title">🚨 Emergency Replies</div>
+    <div class="emergency-row">
+      <label>EMERGENCY MESSAGE 1</label>
+      <input type="text" class="emergency-input" id="emergency_message_1"
+             value="{{ settings.emergency_message_1 }}" maxlength="50">
+    </div>
+    <div class="emergency-row">
+      <label>EMERGENCY MESSAGE 2</label>
+      <input type="text" class="emergency-input" id="emergency_message_2"
+             value="{{ settings.emergency_message_2 }}" maxlength="50">
+    </div>
+    <div class="emergency-row">
+      <label>EMERGENCY MESSAGE 3</label>
+      <input type="text" class="emergency-input" id="emergency_message_3"
+             value="{{ settings.emergency_message_3 }}" maxlength="50">
+    </div>
+  </div>
+
+  <!-- SYSTEM INFO -->
+  <div class="section">
+    <div class="section-title">System Information</div>
+    <div class="info-grid">
+      <div class="info-item">
+        <div class="info-label">Device</div>
+        <div class="info-value">EDEMI v1.0</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Vosk Model</div>
+        <div class="info-value">en-us-0.15</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Network</div>
+        <div class="info-value" id="info-wifi">--</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Uptime</div>
+        <div class="info-value" id="info-uptime">--</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Power</div>
+        <div class="info-value">Powered</div>
+      </div>
+      <div class="info-item">
+        <div class="info-label">Display</div>
+        <div class="info-value">640×480</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SAVE BUTTON -->
+  <button class="save-btn" onclick="saveSettings()">SAVE SETTINGS</button>
+
+  <!-- SCREENSHOT BUTTON -->
+  <button class="save-btn" style="background: linear-gradient(135deg, #0066cc, #0099ff); margin-top: 8px;" onclick="takeScreenshot()">📸 TAKE SCREENSHOT</button>
+
+  <button class="shutdown-btn" onclick="shutdownDevice()">⏻ SHUTDOWN EDEMI</button>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  function saveSettings() {
+    const data = {
+      user_name:            document.getElementById("user_name").value,
+      user_city:            document.getElementById("user_city").value,
+      user_age_group:       document.getElementById("user_age_group").value,
+      user_religion:        document.getElementById("user_religion").value,
+      user_reply_style:     document.getElementById("user_reply_style").value,
+      user_gender:          document.getElementById("user_gender").value,
+      auto_reply:           document.getElementById("auto_reply").checked,
+      environment_alerts:   document.getElementById("environment_alerts").checked,
+      mic_sensitivity:      document.getElementById("mic_sensitivity").value,
+      tft_clear_delay:      parseInt(document.getElementById("tft_clear_delay").value),
+      alert_duration:       parseInt(document.getElementById("alert_duration").value),
+      ar_text_size:         document.getElementById("ar_text_size").value,
+      show_date:            document.getElementById("show_date").checked,
+      show_wifi:            document.getElementById("show_wifi").checked,
+      show_battery:         document.getElementById("show_battery").checked,
+      emergency_message_1:  document.getElementById("emergency_message_1").value,
+      emergency_message_2:  document.getElementById("emergency_message_2").value,
+      emergency_message_3:  document.getElementById("emergency_message_3").value,
+    };
+    fetch("/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    })
+    .then(r => r.json())
+    .then(res => {
+      showToast(
+        res.status === "success" ? "✓ Settings saved!" : "✗ " + res.message,
+        res.status === "success" ? "" : "error"
+      );
+    })
+    .catch(() => showToast("✗ Connection error", "error"));
+  }
+
+  function takeScreenshot() {
+    fetch("/screenshot", { method: "POST" })
+    .then(r => r.json())
+    .then(res => {
+      if (res.status === "success") {
+      } else {
+        showToast("✗ " + res.message, "error");
+      }
+    })
+    .catch(() => showToast("✗ Screenshot failed", "error"));
+  }
+
+  function shutdownDevice() {
+    if (!confirm("Shutdown EDEMI? This will turn off the device.")) return;
+    fetch("/shutdown", { method: "POST" })
+    .then(r => r.json())
+    .then(() => showToast("Shutting down EDEMI..."))
+    .catch(() => showToast("✗ Shutdown failed", "error"));
+  }
+
+  function showToast(msg, type = "") {
+    const t = document.getElementById("toast");
+    t.textContent = msg;
+    t.className   = "toast " + type + " show";
+    setTimeout(() => { t.className = "toast"; }, 3000);
+  }
+
+  function refreshStatus() {
+    fetch("/status")
+    .then(r => r.json())
+    .then(d => {
+      document.getElementById("st-wifi").textContent   = d.wifi   || "--";
+      document.getElementById("st-uptime").textContent = d.uptime || "--";
+      document.getElementById("st-power").textContent  = d.power  || "Powered";
+      document.getElementById("info-wifi").textContent   = d.wifi   || "--";
+      document.getElementById("info-uptime").textContent = d.uptime || "--";
+    })
+    .catch(() => {});
+  }
+
+  refreshStatus();
+  setInterval(refreshStatus, 30000);
+</script>
+</body>
+</html>
