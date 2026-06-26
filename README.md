@@ -9,7 +9,7 @@
 ![Final Prototype](images/device.jpg)
 *Figure 1: Final assembled prototype of the smart glasses system*
 
-![SolidWorks Design](images/solidworks.jpg)
+![SolidWorks Design](images/solidworks.JPG)
 *Figure 2: SolidWorks CAD design of the glasses frame and component housing*
 
 ![Device Being Worn](images/wearing.jpg)
