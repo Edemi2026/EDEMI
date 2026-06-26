@@ -199,10 +199,10 @@ The system must be run from the Pi physical console (not SSH) as the curses AR d
 ## Capstone Project
 
 **Title:** Smart Glasses for Real-Time Communication Between Deaf and Hearing Individuals  
-**Department:** Electrical and Electronic Engineering  
+**Department:** Electrical and Electronic Engineering and Computer Engineering 
 **Year:** 2026  
-**Team:** [Your Names]  
-**Institution:** [Your Institution]  
+**Team:** Ibrahim Moro - Taiwo Abolade Opafunso - Judikael Bidossesi Lokossi
+**Institution:** Accra Institute of Technology  
 
 ---
 
